@@ -1,6 +1,7 @@
 import {
 	Platform,
 	NativeModules } from 'react-native';
+import moment from 'moment';
 
 var Exif = {}
 
@@ -34,7 +35,7 @@ function parseToJSObjectAndroid(exif){
 				output[key] = parseFloat(exif[key]);
 			}
 			else if (dateProps.includes(key)) {
-				output[key] = Date.parse(exif[key]);
+				output[key] = moment(exif[key], 'YYYY:MM:DD HH:mm:ss').toDate();
 			}
 			else {
 				output[key] = exif[key];
