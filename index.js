@@ -4,20 +4,44 @@ import {
 
 var Exif = {}
 
-function unifyAndroid(exif){
+function parseToJSObjectAndroid(exif){
 	var output = {} 
 
-	output.ImageWidth = parseInt(exif.ImageWidth)
-	output.ImageHeight = parseInt(exif.ImageLength)
-	output.Orientation = parseInt(exif.Orientation)
-	return output
-}
+	const intProps = [
+		'WhiteBalance',
+		'Flash',
+		'ImageLength',
+		'ImageWidth',
+		'ISOSpeedRatings',
+		'Orientation',
+	];
 
-function unifyIOS(exif){
-	var output = {} 
-	output.ImageWidth = exif.PixelWidth
-	output.ImageHeight = exif.PixelHeight
-	output.Orientation = exif.Orientation
+	const floatProps = [
+		'FNumber',
+	];
+
+	const dateProps = [
+		'DateTime',
+		'DateTimeDigitized',
+	];
+
+	for (var key in exif) {
+		if (exif.hasOwnProperty(key)) {
+			if (intProps.includes(key)) {
+				output[key] = parseInt(exif[key]);
+			}
+			else if (floatProps.includes(key)) {
+				output[key] = parseFloat(exif[key]);
+			}
+			else if (dateProps.includes(key)) {
+				output[key] = Date.parse(exif[key]);
+			}
+			else {
+				output[key] = exif[key];
+			}
+		}
+	}
+
 	return output
 }
 
@@ -25,9 +49,9 @@ Exif.getExif = function (uri) {
 	var path = uri.replace('file://', '')
 	return NativeModules.ReactNativeExif.getExif(path).then(result => {
 		if (Platform.OS === 'android') {
-			return unifyAndroid(result)
+			return parseToJSObjectAndroid(result)
 		} else {
-			return unifyIOS(result)
+			return result;
 		}
 	})
 }
