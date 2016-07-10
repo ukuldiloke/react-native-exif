@@ -28,14 +28,16 @@ function parseToJSObjectAndroid(exif){
 
 	for (var key in exif) {
 		if (exif.hasOwnProperty(key)) {
-			if (intProps.includes(key)) {
-				output[key] = parseInt(exif[key]);
-			}
-			else if (floatProps.includes(key)) {
-				output[key] = parseFloat(exif[key]);
-			}
-			else if (dateProps.includes(key)) {
-				output[key] = moment(exif[key], 'YYYY:MM:DD HH:mm:ss').toDate();
+			if (exif[key] !== null) {
+				if (intProps.includes(key)) {
+					output[key] = parseInt(exif[key]);
+				}
+				else if (floatProps.includes(key)) {
+					output[key] = parseFloat(exif[key]);
+				}
+				else if (dateProps.includes(key)) {
+					output[key] = moment(exif[key], 'YYYY:MM:DD HH:mm:ss').toDate();
+				}
 			}
 			else {
 				output[key] = exif[key];
