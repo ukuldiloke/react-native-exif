@@ -10,6 +10,10 @@ import com.facebook.react.bridge.Arguments;
 
 import com.facebook.react.bridge.WritableMap;
 
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.database.Cursor;
+
 public class Exif extends ReactContextBaseJavaModule  {
 
     private static final String[] EXIF_ATTRIBUTES = new String[] {
@@ -49,11 +53,22 @@ public class Exif extends ReactContextBaseJavaModule  {
         return "ReactNativeExif";
     }
 
+    private String getRealPathFromURI(Uri contentUri) {
+        String[] proj = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getCurrentActivity()
+            .managedQuery(contentUri, proj, null, null, null);
+        int column_index = cursor
+            .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
+    }
+
     @ReactMethod
-    public void getExif( String uri, Promise promise) throws Exception {
+    public void getExif(String uri, Promise promise) throws Exception {
         ExifInterface exif; 
-        try { 
-            exif = new ExifInterface(uri); 
+        try {
+            String path = getRealPathFromURI(Uri.parse(uri));
+            exif = new ExifInterface(path);
         } catch (IOException e) { 
             promise.reject(e.toString());
             return;
