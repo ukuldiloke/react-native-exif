@@ -23,13 +23,7 @@ public class Exif extends ReactContextBaseJavaModule  {
         ExifInterface.TAG_EXPOSURE_TIME,
         ExifInterface.TAG_FLASH,
         ExifInterface.TAG_FOCAL_LENGTH,
-        ExifInterface.TAG_GPS_ALTITUDE,
-        ExifInterface.TAG_GPS_ALTITUDE_REF,
         ExifInterface.TAG_GPS_DATESTAMP,
-        ExifInterface.TAG_GPS_LATITUDE,
-        ExifInterface.TAG_GPS_LATITUDE_REF,
-        ExifInterface.TAG_GPS_LONGITUDE,
-        ExifInterface.TAG_GPS_LONGITUDE_REF,
         ExifInterface.TAG_GPS_PROCESSING_METHOD,
         ExifInterface.TAG_GPS_TIMESTAMP,
         ExifInterface.TAG_IMAGE_LENGTH,
@@ -75,6 +69,12 @@ public class Exif extends ReactContextBaseJavaModule  {
         } 
 
         WritableMap exifMap = Arguments.createMap();
+        float[] output = new float[2];
+        if (exif.getLatLong(output)) {
+            exifMap.putDouble("GPSLatitude", output[0]);
+            exifMap.putDouble("GPSLongitude", output[1]);
+        }
+
         for (String attribute : EXIF_ATTRIBUTES) {
             String value = exif.getAttribute(attribute);
             exifMap.putString(attribute, value);

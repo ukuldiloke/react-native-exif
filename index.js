@@ -19,6 +19,8 @@ function parseToJSObjectAndroid(exif){
 
 	const floatProps = [
 		'FNumber',
+		'GPSLatitude',
+		'GPSLongitude',
 	];
 
 	const dateProps = [
